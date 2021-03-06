@@ -1,0 +1,27 @@
+{
+  "name": "ubf-to-twilio",
+  "version": "1.0.0",
+  "description": "Bundles together multiple Twilio API calls to let you easily deploy a chatbot in a few requests.",
+  "main": "ubfToTwilio.js",
+  "directories": {
+    "lib": "lib",
+    "import-lib": "import-lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "twilio",
+    "api",
+    "autopilot",
+    "sms"
+  ],
+  "author": "SMS-IT",
+  "license": "AGPLv3",
+  "dependencies": {
+    "log": "^6.0.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "twilio": "^3.57.0"
+  }
+}
