@@ -1,6 +1,6 @@
 {
   "name": "ubf-to-twilio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bundles together multiple Twilio API calls to let you easily deploy a chatbot in a few requests.",
   "main": "ubfToTwilio.js",
   "directories": {
