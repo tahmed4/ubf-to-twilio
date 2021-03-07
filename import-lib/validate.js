@@ -1,4 +1,3 @@
-const vfSchemas = require("./vf-schemas.js")
 const ubfSchemas = require("./ubf-schemas.js")
 const validate  = require('jsonschema').validate;
 const {ValidationError} = require('./Exceptions.js');
@@ -47,68 +46,6 @@ async function assistantNameAvailable(client, name){
 
 }
 
-/**
- * Performs validation on input diagram checking if types
- * and nodes are supported.
- * 
- * @param {Object} diagram - voiceflow diagram
- * 
- * @returns {boolean} - `true` if passes validation.
- * 
- * @throws {ValidationError} - Thrown if validation fails.
- */
-async function validateDiagram(diagram){
-    var supportedBlocks = ["speak", "block", "interaction", "start", "command"]
-    var startFound = false
-
-    try{
-        var rootDiagram = diagram["version"]["rootDiagramID"]
-    } catch(err) {
-        message = "invalid vf file: root diagram missing\n" + err 
-        throw new ValidationError(message)
-    }
-    try {
-        var nodes = diagram["diagrams"][rootDiagram]["nodes"]
-    } catch(err) {
-        message = "invalid vf file: nodes missing\n" + err
-        throw new ValidationError(message)
-    }
-
-    try {
-        for(var node in nodes){
-            if(!(supportedBlocks.includes(nodes[node]["type"]))){
-                throw new ValidationError(`invalid vf file: unsupported block ${nodes[node]["type"]}`)
-            }
-
-            if(nodes[node]["type"] === "interaction"){
-                try{
-                if(nodes[node]["data"]["ports"].length > 3){
-                    throw new ValidationError(`invalid vf file: more than just a Yes/No question at node ${node}`)
-                } else if (nodes[node]["data"]["ports"].length < 3){
-                    throw new ValidationError(`invalid vf file: incomplete choice block at ${node}`)
-                }
-
-                } catch (e) {
-                    message = `invalid vf file: missing ports on node ${node}\n` + e
-                    throw new ValidationError(message)
-                }
-            }
-            
-            if(nodes[node]["type"] === "start"){
-                startFound = true
-            }
-        }    
-
-    } catch (err) {
-        throw new ValidationError(err)
-    }
-
-    if (!startFound){
-        throw new ValidationError("Start block missing")
-    }
-
-    return true
-}
 
 /**
  * Checks if name meets Twilio's format.
@@ -150,37 +87,6 @@ async function checkNameFormat(name, client){
 
 }
 
-/**
- * Checks against JSON schemas for voiceflow diagram
- * as well as individual nodes to see if diagram is valid.
- * 
- * @param {Object} diagram - voiceflow diagram
- * 
- * @returns {boolean} - `true` if diagram is valid.
- * 
- * @throws {ValidationError} - throws if diagram is invalid.
- */
-async function validateDiagramWithSchema(diagram){
-    let vfSchema = await vfSchemas.getVFSchema();
-    vfSchema = JSON.parse(vfSchema)
-    var res = validate(diagram, vfSchema);
-    if(res.valid === false){
-        throw new ValidationError("invalid vf file")
-    }
-    
-    var nodeSchemas = []
-    nodeSchemas.push(await vfSchemas.getSpeakSchema())
-    nodeSchemas.push(await vfSchemas.getChoiceSchema())
-    nodeSchemas.push(await vfSchemas.getBlockSchema())
-    nodeSchemas.push(await vfSchemas.getCommandSchema())
-    nodeSchemas.push(await vfSchemas.getStartSchema())
-    
-    let root_diagram = diagram["version"]["rootDiagramID"]
-    var nodes = diagram["diagrams"][root_diagram]["nodes"]
-
-    valid = await checkNodesWithSchemas(nodes, nodeSchemas)
-    return true
-}
 
 /**
  * Checks against JSON schemas for universal bot format
@@ -239,4 +145,4 @@ async function checkNodesWithSchemas(nodes, nodeSchemas){
     return true 
 }
 
-module.exports = {serviceNameAvaialble, assistantNameAvailable, validateDiagram, checkNameFormat, validateDiagramWithSchema, validateUBF}
+module.exports = {serviceNameAvaialble, assistantNameAvailable, checkNameFormat, validateUBF}
