@@ -1,6 +1,5 @@
 const templates = require("./templates.js")
-const log = require("log");
-
+const {MalformedDiagramError} = require('./Exceptions.js');
 
 /**
  * Go through each node and return the speak 
@@ -9,6 +8,8 @@ const log = require("log");
  * @param {Object} nodes - All nodes from unified bot format.
  * 
  * @returns {string} - Node id of first speak node.
+ * 
+ * @throws {MalformedDiagramError} - If diagram passed in isn't in ubf
  */
 function getStartNode(nodes){
      for (var nodeID in nodes){
@@ -153,8 +154,7 @@ async function genTasksAndMapping(diagram){
             }
         }
     } catch (e){
-        log.error(e)
-        return null
+        throw MalformedDiagramError(e)
     }
     return {
         tasks: tasks,

@@ -1,7 +1,6 @@
 const schemas = require("./schemas.js")
-const log = require("log");
 const validate  = require('jsonschema').validate;
-
+const {ValidationError} = require('./Exceptions.js');
 
 
 /**
@@ -53,7 +52,9 @@ async function assistantNameAvailable(client, name){
  * 
  * @param {Object} diagram - voiceflow diagram
  * 
- * @returns {boolean} - `true` if passes validation, otherwise `false`
+ * @returns {boolean} - `true` if passes validation.
+ * 
+ * @throws {ValidationError} - Thrown if validation fails.
  */
 async function validateDiagram(diagram){
     var supportedBlocks = ["speak", "block", "interaction", "start", "command"]
@@ -62,39 +63,33 @@ async function validateDiagram(diagram){
     try{
         var rootDiagram = diagram["version"]["rootDiagramID"]
     } catch(err) {
-        log.error("invalid vf file: root diagram missing")
-        log.error(err)
-        return false
+        message = "invalid vf file: root diagram missing\n" + err 
+        throw ValidationError(message)
     }
     try {
         var nodes = diagram["diagrams"][rootDiagram]["nodes"]
     } catch(err) {
-        log.error("invalid vf file: nodes missing")
-        log.error(err)
-        return false
+        message = "invalid vf file: nodes missing\n" + err
+        throw ValidationError(message)
     }
 
     try {
         for(var node in nodes){
             if(!(supportedBlocks.includes(nodes[node]["type"]))){
-                log.error(`invalid vf file: unsupported block ${nodes[node]["type"]}`)
-                return false
+                throw ValidationError(`invalid vf file: unsupported block ${nodes[node]["type"]}`)
             }
 
             if(nodes[node]["type"] === "interaction"){
                 try{
                 if(nodes[node]["data"]["ports"].length > 3){
-                    log.error(`invalid vf file: more than just a Yes/No question at node ${node}`)
-                    return false
+                    throw ValidationError(`invalid vf file: more than just a Yes/No question at node ${node}`)
                 } else if (nodes[node]["data"]["ports"].length < 3){
-                    log.error(`invalid vf file: incomplete choice block at ${node}`)
-                    return false
+                    throw ValidationError(`invalid vf file: incomplete choice block at ${node}`)
                 }
 
                 } catch (e) {
-                    log.error(`invalid vf file: missing ports on node ${node}`)
-                    log.error(e)
-                    return false
+                    message = `invalid vf file: missing ports on node ${node}\n` + e
+                    throw ValidationError(message)
                 }
             }
             
@@ -104,13 +99,11 @@ async function validateDiagram(diagram){
         }    
 
     } catch (err) {
-        log.error(err)
-        return false
+        throw ValidationError(err)
     }
 
     if (!startFound){
-        log.error("start block missing")
-        return false
+        throw ValidationError("Start block missing")
     }
 
     return true
@@ -122,7 +115,9 @@ async function validateDiagram(diagram){
  * @param {string} name - name you want to check.
  * @param {Object} client - Twilio API client object.
  * 
- * @returns {boolean} - `true` if meets format, otherwise `false`.
+ * @returns {boolean} - `true` if meets format.
+ * 
+ * @throws {ValidationError} - if format is not met.
  */
 async function checkNameFormat(name, client){
     async function createService(name, client){
@@ -148,8 +143,7 @@ async function checkNameFormat(name, client){
         await deleteService(serviceUid, client)
 
     } catch (e) {
-        log.error(e)
-        return false
+        throw ValidationError(e)
     }
     return true
 
@@ -161,15 +155,16 @@ async function checkNameFormat(name, client){
  * 
  * @param {*} diagram - voiceflow diagram
  * 
- * @returns {boolean} - `true` if diagram is valid, otherwise `false`.
+ * @returns {boolean} - `true` if diagram is valid.
+ * 
+ * @throws {ValidationError} - throws if diagram is invalid.
  */
 async function validateDiagramWithSchema(diagram){
     let vfSchema = await schemas.getVFSchema();
     vfSchema = JSON.parse(vfSchema)
     var res = validate(diagram, vfSchema);
     if(res.valid === false){
-        log.error("invalid vf file")
-        return false
+        throw ValidationError("invalid vf file")
     }
     
     var nodeSchemas = []
@@ -191,8 +186,7 @@ async function validateDiagramWithSchema(diagram){
             }
         }
         if(nodeValid === false){
-            log.error(`invalid node ${node}`)
-            return false
+            throw ValidationError(`invalid node ${node}`)
         }
     }
     return true
