@@ -1,5 +1,3 @@
-const log = require("log");
-
 const connect = require("./lib/tryConnectingToTwilio")
 const phonenumbers =  require("./lib/getSMSAccountPhoneNumbers")
 const deployed = require("./lib/getDeployedBots")
