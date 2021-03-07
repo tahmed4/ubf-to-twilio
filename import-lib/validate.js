@@ -1,4 +1,5 @@
-const schemas = require("./schemas.js")
+const vfSchemas = require("./vf-schemas.js")
+const ubfSchemas = require("./ubf-schemas.js")
 const validate  = require('jsonschema').validate;
 const {ValidationError} = require('./Exceptions.js');
 
@@ -89,7 +90,7 @@ async function validateDiagram(diagram){
 
                 } catch (e) {
                     message = `invalid vf file: missing ports on node ${node}\n` + e
-                    throw ValidationError(message)
+                    throw new ValidationError(message)
                 }
             }
             
@@ -99,11 +100,11 @@ async function validateDiagram(diagram){
         }    
 
     } catch (err) {
-        throw ValidationError(err)
+        throw new ValidationError(err)
     }
 
     if (!startFound){
-        throw ValidationError("Start block missing")
+        throw new ValidationError("Start block missing")
     }
 
     return true
@@ -143,7 +144,7 @@ async function checkNameFormat(name, client){
         await deleteService(serviceUid, client)
 
     } catch (e) {
-        throw ValidationError(e)
+        throw new ValidationError(e)
     }
     return true
 
@@ -153,30 +154,76 @@ async function checkNameFormat(name, client){
  * Checks against JSON schemas for voiceflow diagram
  * as well as individual nodes to see if diagram is valid.
  * 
- * @param {*} diagram - voiceflow diagram
+ * @param {Object} diagram - voiceflow diagram
  * 
  * @returns {boolean} - `true` if diagram is valid.
  * 
  * @throws {ValidationError} - throws if diagram is invalid.
  */
 async function validateDiagramWithSchema(diagram){
-    let vfSchema = await schemas.getVFSchema();
+    let vfSchema = await vfSchemas.getVFSchema();
     vfSchema = JSON.parse(vfSchema)
     var res = validate(diagram, vfSchema);
     if(res.valid === false){
-        throw ValidationError("invalid vf file")
+        throw new ValidationError("invalid vf file")
     }
     
     var nodeSchemas = []
-    nodeSchemas.push(await schemas.getSpeakSchema())
-    nodeSchemas.push(await schemas.getChoiceSchema())
-    nodeSchemas.push(await schemas.getBlockSchema())
-    nodeSchemas.push(await schemas.getCommandSchema())
-    nodeSchemas.push(await schemas.getStartSchema())
+    nodeSchemas.push(await vfSchemas.getSpeakSchema())
+    nodeSchemas.push(await vfSchemas.getChoiceSchema())
+    nodeSchemas.push(await vfSchemas.getBlockSchema())
+    nodeSchemas.push(await vfSchemas.getCommandSchema())
+    nodeSchemas.push(await vfSchemas.getStartSchema())
     
     let root_diagram = diagram["version"]["rootDiagramID"]
     var nodes = diagram["diagrams"][root_diagram]["nodes"]
 
+    valid = await checkNodesWithSchemas(nodes, nodeSchemas)
+    return true
+}
+
+/**
+ * Checks against JSON schemas for universal bot format
+ * as well as individual nodes to see if input diagram is valid.
+ * 
+ * @param {Object} diagram - UBF diagram
+ * 
+ * @returns {boolean} - `true` if diagram is valid.
+ * 
+ * @throws {ValidationError} - throws if diagram is invalid.
+ */
+ async function validateUBF(diagram){
+    let ubfSchema = await ubfSchemas.getUBFSchema();
+    ubfSchema = JSON.parse(ubfSchema)
+    var res = validate(diagram, ubfSchema);
+    if(res.valid === false){
+        throw new ValidationError("invalid ubf diagram")
+    }
+    
+    var nodeSchemas = []
+    nodeSchemas.push(await ubfSchemas.getUBFChoiceSchema())
+    nodeSchemas.push(await ubfSchemas.getUBFSpeakSchema())
+    nodeSchemas.push(await ubfSchemas.getUBFStartSchema())
+
+    var nodes = diagram["project"]["nodes"]
+
+    valid = await checkNodesWithSchemas(nodes, nodeSchemas)
+    return true
+}
+
+/**
+ * Utility function that iterates through all nodes
+ * in a diagram and validates against their own
+ * node schemas.
+ * 
+ * @param {Object} nodes - Nodes of input diagram.
+ * @param {Object} nodeSchemas - Schemas for each type of node.
+ * 
+ * @returns {boolean} - `true` if all nodes are valid.
+ * 
+ * @throws {ValidationError} - throws if diagram is invalid.
+ */
+async function checkNodesWithSchemas(nodes, nodeSchemas){
     for(var node in nodes){
         var nodeValid = false
         for(var i in nodeSchemas){
@@ -186,10 +233,10 @@ async function validateDiagramWithSchema(diagram){
             }
         }
         if(nodeValid === false){
-            throw ValidationError(`invalid node ${node}`)
+            throw new ValidationError(`invalid node ${node}`)
         }
-    }
-    return true
+    } 
+    return true 
 }
 
-module.exports = {serviceNameAvaialble, assistantNameAvailable, validateDiagram, checkNameFormat, validateDiagramWithSchema}
+module.exports = {serviceNameAvaialble, assistantNameAvailable, validateDiagram, checkNameFormat, validateDiagramWithSchema, validateUBF}
