@@ -64,27 +64,27 @@ async function validateDiagram(diagram){
         var rootDiagram = diagram["version"]["rootDiagramID"]
     } catch(err) {
         message = "invalid vf file: root diagram missing\n" + err 
-        throw ValidationError(message)
+        throw new ValidationError(message)
     }
     try {
         var nodes = diagram["diagrams"][rootDiagram]["nodes"]
     } catch(err) {
         message = "invalid vf file: nodes missing\n" + err
-        throw ValidationError(message)
+        throw new ValidationError(message)
     }
 
     try {
         for(var node in nodes){
             if(!(supportedBlocks.includes(nodes[node]["type"]))){
-                throw ValidationError(`invalid vf file: unsupported block ${nodes[node]["type"]}`)
+                throw new ValidationError(`invalid vf file: unsupported block ${nodes[node]["type"]}`)
             }
 
             if(nodes[node]["type"] === "interaction"){
                 try{
                 if(nodes[node]["data"]["ports"].length > 3){
-                    throw ValidationError(`invalid vf file: more than just a Yes/No question at node ${node}`)
+                    throw new ValidationError(`invalid vf file: more than just a Yes/No question at node ${node}`)
                 } else if (nodes[node]["data"]["ports"].length < 3){
-                    throw ValidationError(`invalid vf file: incomplete choice block at ${node}`)
+                    throw new ValidationError(`invalid vf file: incomplete choice block at ${node}`)
                 }
 
                 } catch (e) {
