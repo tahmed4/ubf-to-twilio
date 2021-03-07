@@ -18,6 +18,7 @@
   "author": "SMS-IT",
   "license": "APGLv3",
   "dependencies": {
+    "form-data": "^4.0.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "twilio": "^3.57.0"
