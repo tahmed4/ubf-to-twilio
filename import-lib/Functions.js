@@ -60,7 +60,7 @@ async function createFunctionResource(serviceUid, functionUid, client){
     await axios.post(url, form,  {
     headers: {
         Authorization: 'Basic ' + Buffer.from(`${client.accountSid}:${client.password}`).toString('base64'),
-        'Content-Type': 'multipart/form-data'
+        ...form.getHeaders(),
     },
     })
 
