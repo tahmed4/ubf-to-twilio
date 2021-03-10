@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: import-lib/generateTasks.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: import-lib/generateTasks.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const templates = require("./templates.js")
+const {MalformedDiagramError} = require('./Exceptions.js');
+
+/**
+ * Go through each node and return the speak 
+ * node connected to start.
+ * 
+ * @param {Object} nodes - All nodes from unified bot format.
+ * 
+ * @returns {string} - Node id of first speak node.
+ * 
+ * @throws {MalformedDiagramError} - If diagram passed in isn't in ubf
+ */
+function getStartNode(nodes){
+     for (var nodeID in nodes){
+        var node = nodes[nodeID]
+        if(node["type"] === "start"){
+            return node["next"]
+        }
+    }
+}
+
+/**
+ * Look at next connection and identify what type of template is 
+ * to be used for current node.
+ * 
+ * @param {string} node - Current node.
+ * @param {Object} allNodes - All nodes from bot format.
+ * 
+ * @returns {string} = Template type.
+ */
+async function findNodeTemplateType(node, allNodes){
+    var nodeInfo = allNodes[node]
+
+    
+    if(nodeInfo["type"] === "speak"){
+        //speak[target] = None
+        if(nodeInfo["next"] === null){
+            return "finalTask"
+        }
+
+        var nextNode = nodeInfo["next"]
+        var nextNodeInfo = allNodes[nextNode]
+        
+        //speak -> speak -> speak
+
+        if(nextNodeInfo["type"] === "speak"){
+            return "chainedSpeak"
+        }
+
+        //speak -> interaction 
+        if(nextNodeInfo["type"] === "interaction"){
+            return "YNTemplate"
+        }
+        else {
+            throw new Error("unsupported voiceflow diagram. \n Ensure that you only use \"speak\" and \"interaction\" blocks ") 
+        }
+    }
+}
+
+
+/**
+ * Load the JSON templates for each task.
+ * 
+ * @param {string} templateType - Describes which template to be loaded.
+ * 
+ * @returns {Object} - Template
+ */
+async function loadTemplate(templateType){
+    
+    if(templateType === "YNTemplate"){
+        return await templates.getYNTemplate()
+    } else if (templateType === "finalTask"){
+        return await templates.getFinalTask()
+    } else if (templateType === "chainedSpeak"){
+        return await templates.getChainedSpeak()
+    }
+
+}
+
+/**
+ * Generates the Twilio Tasks from templates   
+ *  
+ * @param {string} node - Node to generate task of.
+ * @param {Object} allNodes - All nodes from bot format.
+ * @param {string} startNode - The start node.
+ * @param {Object} mapping - Mapping from one node to another.
+ * 
+ * @returns {Object} - Template and associated node.
+ */
+async function generateJSON(node, allNodes, startNode, mapping){
+    var peekVal = await findNodeTemplateType(node, allNodes)
+    var template = await loadTemplate(peekVal)
+    
+    var nodeInfo = allNodes[node]
+    var text = nodeInfo["content"]
+    
+    if(peekVal === "YNTemplate"){
+        template["actions"][0]["collect"]["questions"][0]["question"] = text
+        template["actions"][0]["collect"]["questions"][0]["name"] = node
+        template["actions"][0]["collect"]["on_complete"]["redirect"]["uri"] = "bot_uri_holder"
+        
+    }
+
+    else if(peekVal === "finalTask"){
+        template["actions"][0]["say"] = text
+    }
+    
+    else if(peekVal === "chainedSpeak"){
+        template["actions"][0]["say"] = text
+        template["actions"][1]["redirect"] += mapping[node]
+    }
+    
+    if(node === startNode){
+        node = "start" + node
+    }
+
+    return{
+        node : node,
+        template: template,
+    }
+}
+
+
+/**
+ * Using the bot format, goes through each node
+ * and builds the tasks and mapping.
+ * 
+ * @param {Object} diagram - Voiceflow diagram.
+ * 
+ * @returns {Object} - Tasks and mapping.
+ */
+async function genTasksAndMapping(diagram){
+    try {
+        var tasks = {}
+        var mapping = {}
+        var nodes = diagram["project"]["nodes"]
+        var startNode = await getStartNode(nodes);
+
+        for(var node in nodes){
+            var nodeInfo = nodes[node]
+            if(nodeInfo["type"] === "speak"){
+                if(nodeInfo["next"] != null){
+                    var nextNodeInfo = nodes[nodeInfo["next"]]
+                    if(nextNodeInfo["type"] === "speak"){
+                        mapping[node] = nodeInfo["next"]
+                    } else if(nextNodeInfo["type"] === "interaction"){
+                        mapping[node] = [nextNodeInfo["options"][0]["next"], nextNodeInfo["options"][1]["next"]]
+                    }
+                    
+                }
+                let taskDef = await generateJSON(node, nodes, startNode, mapping)
+                tasks[taskDef.node] = taskDef.template
+            }
+        }
+    } catch (e){
+        throw MalformedDiagramError(e)
+    }
+    return {
+        tasks: tasks,
+        mapping: mapping
+    }
+}
+
+/**
+ * Initiate task generation.
+ * 
+ * @param {Object} diagram - Voiceflow diagram.
+ * 
+ * @returns {Object} - Tasks and mapping.
+ */
+async function generateTasks(diagram){
+    let generated = await genTasksAndMapping(diagram)
+    return generated
+}
+
+module.exports = {generateTasks}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#checkNameFormat">checkNameFormat</a></li><li><a href="global.html#checkNodesWithSchemas">checkNodesWithSchemas</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 13:14:20 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/changeBotPhoneNumber.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/changeBotPhoneNumber.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const {TwilioRequestError} = require('../import-lib/Exceptions.js');
+const Numbers = require("../import-lib/Numbers.js")
+
+/**
+ * Links a bot to a phone number by updating
+ * target webhook. Will overwrite webhook if one exists at the number 
+ * and if bot is currently linked with a number, it will be unlinked and 
+ * freed.
+ * 
+ * 
+ * @param {Object} client - Twilio API client object.
+ * @param {string} id - id of assistant that is going to be associated with number.
+ * @param {string} number - Desired phone number for assistant to be linked to. e.g ("+447123456789")
+ * 
+ * @returns {boolean} - `true` if number successfully changed.
+ * 
+ * @throws {TwilioRequestError} - throws error if number didn't change successfully
+ */
+async function changeBotPhoneNumber(client, id, number) {
+  try {
+    var numbers = await Numbers.getNamesToNumber(client)
+  } catch (e){
+    throw new TwilioRequestError(e)
+  }
+
+  var phoneUid = ""
+
+
+  try {
+    if(numbers.hasOwnProperty(id)){
+      phoneUid = await Numbers.getNumberId(client, numbers[id])
+      await Numbers.updateNumberWebhook(client, id, phoneUid, true)
+    }
+
+    phoneUid = await Numbers.getNumberId(client, number)
+    await Numbers.updateNumberWebhook(client, id, phoneUid, false)
+  } catch (e){
+    throw new TwilioRequestError(e)
+  }
+
+  return true
+
+}
+
+module.exports =  {changeBotPhoneNumber}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#checkNameFormat">checkNameFormat</a></li><li><a href="global.html#checkNodesWithSchemas">checkNodesWithSchemas</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 13:14:20 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

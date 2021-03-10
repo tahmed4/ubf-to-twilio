@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: import-lib/Services.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: import-lib/Services.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Creates a service on Twilio.
+ * 
+ * @param {string} name - Name you want to give to service.
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string} - service id of newly created service
+ */
+async function createService(name, client){
+    var service_id = ""
+    await client.serverless.services
+                .create({
+                    includeCredentials: true,
+                    uniqueName: name,
+                    friendlyName: name
+                })
+                .then(service => service_id = service.sid);
+
+    return service_id
+}
+
+/**
+ * Creating an assistant environment in Twilio.
+ * 
+ * @param {string} serviceUid - Twilio service id.
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string} - Twilio environment id
+ */
+async function createEnvironment(serviceUid, client){
+    var environmentId = ""
+    await client.serverless.services(serviceUid)
+    .environments
+    .create({domainSuffix: 'dev', uniqueName: 'development'})
+    .then(environment => environmentId = environment.sid);
+    return environmentId
+    
+}
+
+
+/**
+ * Generate build for uploaded bot.
+ * 
+ * @param {string} serviceUid - Twilio service id.
+ * @param {string} functionVersionUid - Twilio function version id.
+ * @param {string} assetVersionUid - Twilio asset version id.
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string} - Twilio build id.
+ */
+async function createBuild(serviceUid, functionVersionUid, assetVersionUid, client){
+    var buildUid = ""
+    await client.serverless.services(serviceUid)
+                 .builds
+                 .create({
+                     functionVersions: functionVersionUid,
+                     assetVersions: assetVersionUid
+                 })
+                 .then(build => buildUid = build.sid);
+    return buildUid
+}
+
+/**
+ * Returns the current status of given build
+ * 
+ * @param {string} serviceUid - Twilio service id.
+ * @param {string} buildUid - Twilio build id.
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string} - Status of build e.g ("complete")
+ */
+async function getBuildStatus(serviceUid, buildUid, client){
+    var status = ""
+    await client.serverless.services(serviceUid)
+    .builds(buildUid)
+    .buildStatus()
+    .fetch()
+    .then(build_status => status = build_status.status);
+    return status
+}
+
+/**
+ * Deploys Twilio assistant.
+ * 
+ * @param {string} serviceUid - Twilio service id.
+ * @param {string} environmentUid - Twilio environment id.
+ * @param {string} buildUid - Twilio build id.
+ * @param {client} client - Twilio API client object.
+ */
+async function createDeployment(serviceUid, environmentUid, buildUid, client){
+    await client.serverless.services(serviceUid)
+                 .environments(environmentUid)
+                 .deployments
+                 .create({
+                     buildSid: buildUid
+                 })
+}
+
+/**
+ * This takes in an assistant id and looks through all live Twilio
+ * services and returns the service id if a match is found.
+ * 
+ * @param {string} assistantName - Name of assistant find linked service.
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string}
+ */
+async function getServiceUid(assistantName, client){
+    var serviceUid = ""
+    await client.serverless.services
+                .list()
+                .then(services => services.forEach(s => {
+                    if(s.friendlyName ===  assistantName){
+                        serviceUid = s.sid
+                    }
+                }));
+    return serviceUid
+}
+
+/**
+ * Removes a live service from Twilio services
+ * via service id.
+ * 
+ * @param {string} serviceUid - The Twilio service id of the service you want to delete
+ * @param {Object} client - Twilio API client object.
+ */
+async function deleteService(serviceUid, client){
+    await client.serverless.services(serviceUid).remove();
+}
+
+module.exports = {createService, createEnvironment, createBuild, getBuildStatus, createDeployment, getServiceUid, deleteService}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#checkNameFormat">checkNameFormat</a></li><li><a href="global.html#checkNodesWithSchemas">checkNodesWithSchemas</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 13:14:20 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

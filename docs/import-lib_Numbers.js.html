@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: import-lib/Numbers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: import-lib/Numbers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Takes in phone number of format "+447123456789" and returns
+ * it's corresponding id on Twilio servers.
+ * 
+ * @param {Object} client - Twilio API client object.
+ * @param {string} number - The phone number which you want to retrieve the phone uid of.
+ * 
+ * @returns {string} - Twilio unique phone id of phone number
+ */
+async function getNumberId(client, number){
+    var phoneUid = ""
+    await client.incomingPhoneNumbers
+    .list({phoneNumber: number})
+    .then(incomingPhoneNumbers => incomingPhoneNumbers.forEach(i => phoneUid = i.sid));
+    return phoneUid
+}
+
+/**
+ * Sets the sms-url webhook for the specified twilio phone id and 
+ * sets the friendly name of the phone number to the assistant id,
+ * to represent which bot the number points to.
+ * 
+ * @param {Object} client - Twilio API client object.
+ * @param {string} assistantUid - id of assistant you want to link to number.
+ * @param {string} phoneUid - id of phone number you want assistant linked to.
+ * @param {boolean} free - `true` to release phone number, `false` to set webhook at phone number
+ * 
+ */
+async function updateNumberWebhook(client, assistantUid, phoneUid, free){
+    var url = ""
+    if (free){
+        assistantUid = "free-number"
+    } else{
+        url = `https://channels.autopilot.twilio.com/v1/${client.accountSid}/${assistantUid}/twilio-messaging?TargetTask=greeting`
+    }
+    await client.incomingPhoneNumbers(phoneUid)
+    .update({
+        friendlyName: assistantUid,
+        smsUrl: url
+        })
+    .then(incoming_phone_number => console.log(incoming_phone_number.friendlyName, incoming_phone_number.phoneNumber));
+
+}
+
+/**
+ * Returns all phone numbers that are associated
+ * with the Twilio account.
+ * 
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {string[]} - all numbers associated with Twilio account.
+ */
+async function listNumbers(client){
+    var numbers = []
+    await client.incomingPhoneNumbers.list().then((incomingPhoneNumbers => incomingPhoneNumbers.forEach(i => numbers.push(i.phoneNumber))));
+    return numbers
+}
+
+/**
+ * Returns mapping of all friendly names of numbers associated
+ * with the account with their respected number.
+ * 
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {Object} - mapping of friendly name to number
+ */
+async function getNamesToNumber(client){
+    var numbers = {}
+    await client.incomingPhoneNumbers.list().then((incomingPhoneNumbers => incomingPhoneNumbers.forEach(i => numbers[i.friendlyName] = i.phoneNumber)));
+    return numbers
+}
+
+/**
+ * Returns a list of the friendly names of each
+ * phone number on the Twilio account.
+ * 
+ * @param {Object} client - Twilio API client object.
+ * 
+ * @returns {Array.&lt;string>}
+ */
+async function getLinkedAssistants(client){
+    var linkedAssistants = []
+    await client.incomingPhoneNumbers.list().then((incomingPhoneNumbers => incomingPhoneNumbers.forEach(i => linkedAssistants.push(i.friendlyName))));
+    return linkedAssistants
+}
+
+
+module.exports =  {getNumberId, updateNumberWebhook, listNumbers, getNamesToNumber, getLinkedAssistants}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#checkNameFormat">checkNameFormat</a></li><li><a href="global.html#checkNodesWithSchemas">checkNodesWithSchemas</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 13:14:20 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
