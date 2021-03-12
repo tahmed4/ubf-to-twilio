@@ -46,48 +46,6 @@ async function assistantNameAvailable(client, name){
 
 }
 
-
-/**
- * Checks if name meets Twilio's format.
- * 
- * @param {string} name - name you want to check.
- * @param {Object} client - Twilio API client object.
- * 
- * @returns {boolean} - `true` if meets format.
- * 
- * @throws {ValidationError} - if format is not met.
- */
-async function checkNameFormat(name, client){
-    async function createService(name, client){
-        var serviceId = ""
-        await client.serverless.services
-                    .create({
-                        includeCredentials: true,
-                        uniqueName: name,
-                        friendlyName: name
-                    })
-                    .then(service => serviceId = service.sid);
-
-        return serviceId
-    
-    }
-
-    async function deleteService(serviceUid, client){
-        await client.serverless.services(serviceUid).remove();
-    }
-
-    try{
-        var serviceUid = await createService(name,client)
-        await deleteService(serviceUid, client)
-
-    } catch (e) {
-        throw new ValidationError(e)
-    }
-    return true
-
-}
-
-
 /**
  * Checks against JSON schemas for universal bot format
  * as well as individual nodes to see if input diagram is valid.
@@ -106,43 +64,24 @@ async function checkNameFormat(name, client){
         throw new ValidationError("invalid ubf diagram")
     }
     
-    var nodeSchemas = []
-    nodeSchemas.push(await ubfSchemas.getUBFChoiceSchema())
-    nodeSchemas.push(await ubfSchemas.getUBFSpeakSchema())
-    nodeSchemas.push(await ubfSchemas.getUBFStartSchema())
+    var nodeSchemas = {}
+    nodeSchemas["interaction"] = await ubfSchemas.getUBFChoiceSchema()
+    nodeSchemas["speak"] = await ubfSchemas.getUBFSpeakSchema()
+    nodeSchemas["start"] = await ubfSchemas.getUBFStartSchema()
 
     var nodes = diagram["project"]["nodes"]
+    for(var node in nodes){
+        var nodeValid = false
 
-    valid = await checkNodesWithSchemas(nodes, nodeSchemas)
+        nodeValid = validate(nodes[node], JSON.parse(nodeSchemas[nodes[node]["type"]])).valid
+        
+        if(nodeValid === false){
+            return false
+        }
+    }
     return true
 }
 
-/**
- * Utility function that iterates through all nodes
- * in a diagram and validates against their own
- * node schemas.
- * 
- * @param {Object} nodes - Nodes of input diagram.
- * @param {Object} nodeSchemas - Schemas for each type of node.
- * 
- * @returns {boolean} - `true` if all nodes are valid.
- * 
- * @throws {ValidationError} - throws if diagram is invalid.
- */
-async function checkNodesWithSchemas(nodes, nodeSchemas){
-    for(var node in nodes){
-        var nodeValid = false
-        for(var i in nodeSchemas){
-            nodeValid = validate(nodes[node], JSON.parse(nodeSchemas[i])).valid
-            if(nodeValid === true){
-                break
-            }
-        }
-        if(nodeValid === false){
-            throw new ValidationError(`invalid node ${node}`)
-        }
-    } 
-    return true 
-}
+module.exports = {serviceNameAvaialble, assistantNameAvailable, validateUBF}
 
-module.exports = {serviceNameAvaialble, assistantNameAvailable, checkNameFormat, validateUBF}
+
