@@ -38,7 +38,6 @@ async function updateNumberWebhook(client, assistantUid, phoneUid, free){
         friendlyName: assistantUid,
         smsUrl: url
         })
-    .then(incoming_phone_number => console.log(incoming_phone_number.friendlyName, incoming_phone_number.phoneNumber));
 
 }
 
