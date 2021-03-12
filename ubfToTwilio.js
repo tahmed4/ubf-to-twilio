@@ -74,9 +74,6 @@ class Api {
    * @throws {ValidationError} - If bot definition is missing any data.
    */
   async uploadNewBot(client, bot) {
-      if(bot == null){
-        return null
-      }
       return (await upload.uploadNewBot(client, bot))
   }
   
@@ -130,7 +127,6 @@ class Api {
    * @throws {TwilioRequestError} - If request to get simulated text fails.
    */
   async simulateBot(client, id, text){
-    log.info("Simulating bot with text '" + text + "'")
     var simulatedText = await simulate.simulateBot(client, id, text)
     return simulatedText
 
