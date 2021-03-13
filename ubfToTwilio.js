@@ -10,19 +10,19 @@ const unlinked =  require("./lib/getUnlinkedBots")
 class Api {
 
   /**
-   * Attempts to connect to Twilio with your 
-   * Account Sid and Auth Token from twilio.com/console
-   * returning twilio client object on success.
+   * Attempts to connect to the backend with your 
+   * authentication options
+   * returning an authenticated client object on success.
+   * this client is to be passed to other API calls.
    * 
-   * @param {string} twilioAccountSid - the Twilio Account ID.
-   * @param {string} twilioAuthToken - the Twilio Auth Token.
+   * @param {Object} authoptions  - Object with Twilio Account SID and Twilio Auth Token
    * 
    * @returns {Object} - client object to do API calls. `null` if login details were invalid.
    * 
    * @throws {TwilioRequestError} - If twilio request to login fails.
    */
-  async tryConnectingToTwilio(twilioAccountSid, twilioAuthToken) {
-      var client = await connect.twilioConnect(twilioAccountSid, twilioAuthToken)
+  async tryConnecting(authoptions) {
+      var client = await connect.twilioConnect(authoptions.username, authoptions.password)
       return client
   }
 
@@ -74,9 +74,6 @@ class Api {
    * @throws {ValidationError} - If bot definition is missing any data.
    */
   async uploadNewBot(client, bot) {
-      if(bot == null){
-        return null
-      }
       return (await upload.uploadNewBot(client, bot))
   }
   
@@ -130,7 +127,6 @@ class Api {
    * @throws {TwilioRequestError} - If request to get simulated text fails.
    */
   async simulateBot(client, id, text){
-    log.info("Simulating bot with text '" + text + "'")
     var simulatedText = await simulate.simulateBot(client, id, text)
     return simulatedText
 

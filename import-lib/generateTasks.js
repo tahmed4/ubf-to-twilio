@@ -154,7 +154,7 @@ async function genTasksAndMapping(diagram){
             }
         }
     } catch (e){
-        throw MalformedDiagramError(e)
+        throw new MalformedDiagramError(e.message)
     }
     return {
         tasks: tasks,
@@ -174,4 +174,4 @@ async function generateTasks(diagram){
     return generated
 }
 
-module.exports = {generateTasks}
+module.exports = generateTasks
