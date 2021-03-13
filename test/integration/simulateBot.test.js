@@ -2,7 +2,7 @@ const simulate = require("../../lib/simulateBot.js")
 const twilio = require("twilio")
 
 test("Simulate deployed bot", async () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     let id = "UAe7825031253f79d6c20913871c2aa812"
     let text = "hello"
     resp = await simulate.simulateBot(client, id, text)
@@ -10,7 +10,7 @@ test("Simulate deployed bot", async () => {
 })
 
 test("Simulate deployed bot with empty text response", async () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     let id = "UA6395746dc0cfb5a2c309dd730f606801"
     let text = "hello"
     resp = await simulate.simulateBot(client, id, text)
@@ -46,7 +46,7 @@ test("Undefined Client", () => {
 
 
 test("Invalid Assistant", () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     let id = "invalid"
     let text = "hello"
     simulate.simulateBot(client, id, text).catch(resp => {
@@ -55,7 +55,7 @@ test("Invalid Assistant", () => {
 })
 
 test("Undefined Text", () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     let id = "UAe7825031253f79d6c20913871c2aa812"
     let text = undefined
     simulate.simulateBot(client, id, text).catch(resp => {
@@ -64,7 +64,7 @@ test("Undefined Text", () => {
 })
 
 test("Null as text", () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     let id = "UAe7825031253f79d6c20913871c2aa812"
     let text = null
     simulate.simulateBot(client, id, text).catch(resp => {

@@ -2,7 +2,7 @@ const phonenumbers = require("../../lib/getSMSAccountPhoneNumbers.js")
 const twilio = require("twilio")
 
 test("Return all numbers on an account", () => {
-    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
+    let client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
     phonenumbers.getSMSAccountPhoneNumbers(client).then(resp => {
         expect(resp).toEqual(["+447782602063"])
     })
