@@ -27,21 +27,6 @@ async function createAsset(serviceUid, client){
  * @param {Object} client - Twilio API client object.
  */
  async function createAssetResource(serviceUid, assetUid, mapping, client){
-    /**
-     * Helper function to convert a string to blob type.
-     * 
-     * @param {string} s - string you want to convert to blob
-     * 
-     * @returns {Blob} 
-     */
-    function stringToBlob(s) {
-        const byteNumbers = new Array(s.length);
-        for (let i = 0; i < byteNumbers.length; i++) {
-            byteNumbers[i] = s.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        return new Blob([byteArray], {type: 'application/javascript'});
-    }
 
     let url = `https://serverless-upload.twilio.com/v1/Services/${serviceUid}/Assets/${assetUid}/Versions`
 
@@ -49,13 +34,13 @@ async function createAsset(serviceUid, client){
     let form = new FD();
     form.append("Path", "mapping.json");
     form.append("Visibility", "private");
-    form.append("Content", stringToBlob(JSON.stringify(mapping)), "mapping.json");
+    form.append("Content", JSON.stringify(mapping), "mapping.json");
     form.append("contentType", "application/json");
 
     await axios.post(url, form,  {
     headers: {
         Authorization: 'Basic ' + Buffer.from(`${client.accountSid}:${client.password}`).toString('base64'),
-        'Content-Type': 'multipart/form-data'
+        ...form.getHeaders(),
     },
     })
 }
