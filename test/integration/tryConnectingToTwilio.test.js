@@ -1,5 +1,4 @@
 const connect = require("../../lib/tryConnectingToTwilio.js")
-jest.mock("../../lib/tryConnectingToTwilio.js")
 
 test("Connect to Twilio with valid credentials", async () => {
     resp = await connect.twilioConnect("AC16497ae92be880bf536ddf0d8ae92add", "49dcec040cfa3c1b6e08e9556a5eb9ab")
