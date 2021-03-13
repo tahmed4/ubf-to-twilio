@@ -63,6 +63,7 @@ async function createFunction(serviceUid, client){
         Authorization: 'Basic ' + Buffer.from(`${client.accountSid}:${client.password}`).toString('base64'),
         ...form.getHeaders(),
     },
+    adapter: require('axios/lib/adapters/http'),
     })
 
 }
