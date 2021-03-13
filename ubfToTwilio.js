@@ -15,7 +15,7 @@ class Api {
    * returning an authenticated client object on success.
    * this client is to be passed to other API calls.
    * 
-   * @param {Object} authoptions  - Object with Twilio Account SID and Twilio Auth Token
+   * @param {Object} authoptions  - Object with username and password.
    * 
    * @returns {Object} - client object to do API calls. `null` if login details were invalid.
    * 
@@ -31,9 +31,9 @@ class Api {
    * including numbers that are currently in use by bots
    * or available.
    * 
-   * @param {Object} client - Twilio API client object.
+   * @param {Object} client - client object to do API calls.
    * 
-   * @returns {string[]} - all phonenumbers on twilio Account.
+   * @returns {string[]} - all phonenumbers on the Account.
    * 
    * @throws {TwilioRequestError} - If retrieving account phone numbers fail.
    */
@@ -46,9 +46,9 @@ class Api {
   /**
    * Returns a list of fully initialised bots except
    * for bot.diagram which are currently running live
-   * on Twilio.
+   * on a platform.
    * 
-   * @param {Object} client - Twilio API client object.
+   * @param {Object} client - client object to do API calls
    * 
    * @returns {Object[]} - All fully initialised, except for diagram, live bots. 
    * 
@@ -66,10 +66,10 @@ class Api {
    * alongside mapping and handling files to Twilio.
    * 
    * 
-   * @param {Object} client -  Twilio API client object.
+   * @param {Object} client -  client object to do API calls.
    * @param {Object} bot - Defined bot that is about to be uploaded.
    * 
-   * @returns {string} - Twilio assistant unique id. 
+   * @returns {string} - unique id for uploaded bot. 
    * 
    * @throws {ValidationError} - If bot definition is missing any data.
    */
