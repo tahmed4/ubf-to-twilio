@@ -5,7 +5,7 @@ const twilio = require("twilio")
 
 test("Remove Uploaded Bot", async () => {
     var bot = {"phoneNumber": null, "name": "test", "id": null, "diagram": {"project":{"nodes":{"5f9f562f11b31520c2a2a6de":{"type":"start","next":"604b529f53e5d940a61a34f2"},"604b529f53e5d940a61a34f2":{"type":"speak","content":"Hello","next":"604b52a453e5d940a61a34fc"},"604b52a453e5d940a61a34fc":{"type":"speak","content":"Goodbye","next":null}},"name":"Voiceflow Project"}}, "timestamp": new Date().getTime()}
-    client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
+    client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "9e9acd8216a57baac83559ee8df1ee00")
     id = await upload.uploadNewBot(client,bot)
     await remove.removeBot(client, id)
     assistantData = (await Assistants.getAssistants(client)).assistants
@@ -34,7 +34,7 @@ test("Undefined Client", async () => {
  })
 
  test("Empty Assistant ID", async () => {
-    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
+    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "9e9acd8216a57baac83559ee8df1ee00")
     var id = ""
     try{
         await remove.removeBot(client, id)
@@ -44,7 +44,7 @@ test("Undefined Client", async () => {
  })
 
  test("Null Assistant ID", async () => {
-    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
+    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "9e9acd8216a57baac83559ee8df1ee00")
     var id = null
     try{
         await remove.removeBot(client, id)
@@ -54,7 +54,7 @@ test("Undefined Client", async () => {
  })
 
  test("Undefined Assistant ID", async () => {
-    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
+    var client = twilio("AC16497ae92be880bf536ddf0d8ae92add", "9e9acd8216a57baac83559ee8df1ee00")
     var id = undefined
     try{
         await remove.removeBot(client, id)
