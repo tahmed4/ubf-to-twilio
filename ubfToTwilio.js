@@ -31,9 +31,9 @@ class Api {
    * including numbers that are currently in use by bots
    * or available.
    * 
-   * @param {Object} client - client object to do API calls.
+   * @param {Object} client - Twilio API client object.
    * 
-   * @returns {string[]} - all phonenumbers on the Account.
+   * @returns {string[]} - all phonenumbers on twilio Account.
    * 
    * @throws {TwilioRequestError} - If retrieving account phone numbers fail.
    */
@@ -46,9 +46,9 @@ class Api {
   /**
    * Returns a list of fully initialised bots except
    * for bot.diagram which are currently running live
-   * on a platform.
+   * on Twilio.
    * 
-   * @param {Object} client - client object to do API calls
+   * @param {Object} client - Twilio API client object.
    * 
    * @returns {Object[]} - All fully initialised, except for diagram, live bots. 
    * 
@@ -61,15 +61,15 @@ class Api {
   }
   
   /**
-   * Takes a bot definition and using provided bot.name and
-   * break down bot.diagram into individual units that can
-   * be uploaded to a platform.
+   * Creates a service and assistant using provided bot.name and
+   * breaks down bot.diagram into Twilio tasks and uploads them
+   * alongside mapping and handling files to Twilio.
    * 
    * 
-   * @param {Object} client -  client object to do API calls.
+   * @param {Object} client -  Twilio API client object.
    * @param {Object} bot - Defined bot that is about to be uploaded.
    * 
-   * @returns {string} - unique id for uploaded bot. 
+   * @returns {string} - Twilio assistant unique id. 
    * 
    * @throws {ValidationError} - If bot definition is missing any data.
    */
@@ -79,7 +79,8 @@ class Api {
   
   
   /**
-   * Removes an already deployed bot.
+   * Removes live bot by deleting assistant and service
+   * that sits on Twilio Autopilot and Twilio Functions.
    * 
    * @param {Object} client - Twilio API client object.
    * @param {string} id - Twilio Assistant id of bot to be removed.
