@@ -26,7 +26,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm test
+    - name: Run tests
       env:
         TWILIO_ACCOUNT_SID = ${{ secrets.TWILACCOUNTSID }}
         TWILIO_AUTH_TOKEN = ${{ secrets.TWILAUTHTOKEN }}
+      run: npm test
+
