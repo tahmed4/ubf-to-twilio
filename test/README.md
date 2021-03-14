@@ -5,4 +5,4 @@ To prevent leaking authentication credentials, environment variables are used wh
 Look here to find out how to set your environment variables:
 https://www.twilio.com/docs/usage/secure-credentials
 
-Set %TWILIO_ACCOUNT_SID% and %TWILIO_AUTH_TOKEN% before running tests.
+Set **%TWILIO_ACCOUNT_SID%** and **%TWILIO_AUTH_TOKEN%** before running tests.
