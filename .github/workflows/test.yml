@@ -28,7 +28,7 @@ jobs:
     - run: npm ci
     - name: Run tests
       env:
-        TWILIO_ACCOUNT_SID = ${{ secrets.TWILACCOUNTSID }}
-        TWILIO_AUTH_TOKEN = ${{ secrets.TWILAUTHTOKEN }}
+        TWILIO_ACCOUNT_SID: ${{ secrets.TWILACCOUNTSID }}
+        TWILIO_AUTH_TOKEN: ${{ secrets.TWILAUTHTOKEN }}
       run: npm test
 
