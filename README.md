@@ -30,6 +30,9 @@ assistant_id = await api.uploadNewBot(client, bot)
 //Set the SMS webhook of a specific number.
 api.changeBotPhoneNumber(client, assistant_id, "+447123456789")
 
+//Unset the SMS webhook of a specific bot.
+api.unlinkFromNumber(client, assistant_id)
+
 //Simulate a Conversation with your Chatbot.
 simulated_text = await api.simulateBot(client, assistant_id, "Text you want to simulate!")
 
