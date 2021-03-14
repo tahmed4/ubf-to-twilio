@@ -6,6 +6,7 @@ const changeNumber =  require("./lib/changeBotPhoneNumber")
 const upload =  require("./lib/uploadNewBot")
 const simulate =  require("./lib/simulateBot")
 const unlinked =  require("./lib/getUnlinkedBots")
+const unlinkNumber =  require("./lib/unlinkFromNumber")
 
 class Api {
 
@@ -145,6 +146,22 @@ class Api {
    */
   async getUnlinkedBots(client){
     return (await unlinked.getUnlinkedBots(client))
+  }
+
+  /**
+   * Unlinks a phone number from an assistant by wiping 
+   * the SMS url webhook on a specific phone number and
+   * sets the number as a free-number.
+   * 
+   * @param {Object} client - Twilio API client object.
+   * @param {string} id - id of assistant that is going to be unlinked.
+   * 
+   * @returns {boolean} - `true` if number successfully changed. `false` otherwise.
+   * 
+   * @throws {TwilioRequestError} - throws error if request fails
+   */
+  async unlinkFromNumber(client, id){
+    return (await unlinkNumber.unlinkFromPhoneNumber(client, id))
   }
 
 }
