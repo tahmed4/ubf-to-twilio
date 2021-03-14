@@ -1,7 +1,7 @@
 const connect = require("../../lib/tryConnectingToTwilio.js")
 
 test("Connect to Twilio with valid credentials", async () => {
-    resp = await connect.twilioConnect("AC16497ae92be880bf536ddf0d8ae92add", "55d786518dd391c7c876b8aa83c18c65")
+    resp = await connect.twilioConnect("AC16497ae92be880bf536ddf0d8ae92add", "9e9acd8216a57baac83559ee8df1ee00")
     expect(resp._httpClient.lastResponse.statusCode).toBe(200)
  })
 
