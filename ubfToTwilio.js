@@ -61,9 +61,9 @@ class Api {
   }
   
   /**
-   * Creates a service and assistant using provided bot.name and
-   * breaks down bot.diagram into Twilio tasks and uploads them
-   * alongside mapping and handling files to Twilio.
+   * Takes a bot definition and using provided bot.name and
+   * break down bot.diagram into individual units that can
+   * be uploaded to a platform.
    * 
    * 
    * @param {Object} client -  client object to do API calls.
@@ -79,8 +79,7 @@ class Api {
   
   
   /**
-   * Removes live bot by deleting assistant and service
-   * that sits on Twilio Autopilot and Twilio Functions.
+   * Removes an already deployed bot.
    * 
    * @param {Object} client - Twilio API client object.
    * @param {string} id - Twilio Assistant id of bot to be removed.
