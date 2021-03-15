@@ -13,7 +13,7 @@ Bundles together multiple Twilio API calls to let you easily deploy a chatbot in
 const api = require("ubf-to-twilio")
 
 //Retrieve Twilio Client.
-client = await api.tryConnectingToTwilio({"username": "TwilioAccountSid", "password": "TwilioAuthToken"})
+client = await api.tryConnecting({"username": "TwilioAccountSid", "password": "TwilioAuthToken"})
 
 //List all Phone Numbers on an Account.
 numbers = await api.getSMSAccountPhoneNumbers(client)
