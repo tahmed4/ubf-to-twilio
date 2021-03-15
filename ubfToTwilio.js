@@ -11,12 +11,12 @@ const unlinkNumber =  require("./lib/unlinkFromNumber")
 class Api {
 
   /**
-   * Attempts to connect to the backend with your 
-   * authentication options
-   * returning an authenticated client object on success.
-   * this client is to be passed to other API calls.
+   * Attempts to connect to Twilio with your 
+   * Account Sid and Auth Token from twilio.com/console
+   * returning twilio client object on success.
    * 
-   * @param {Object} authoptions  - Object with Twilio Account SID and Twilio Auth Token
+   * @param {string} twilioAccountSid - the Twilio Account ID.
+   * @param {string} twilioAuthToken - the Twilio Auth Token.
    * 
    * @returns {Object} - client object to do API calls. `null` if login details were invalid.
    * 
