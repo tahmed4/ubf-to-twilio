@@ -1,4 +1,9 @@
+const {TwilioRequestError} = require('../Exceptions.js');
+
 async function getAssistants(client){
+    if(typeof client != "object" || client == null){
+        throw new TwilioRequestError()
+    }
     if(client.authKey != "valid"){
         return {
             allBots: [],
