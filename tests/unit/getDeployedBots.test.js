@@ -11,7 +11,20 @@ test("Fetch Deployed Bots on valid account", () => {
 
 test("Fetch Deployed Bots with invalid credentials", () => {
     client = {"accountSid":"invalid", "authKey":"invalid"}
-    deployed.getDeployedBots(client).then(resp => {
-        expect(resp).toEqual([])
+    deployed.getDeployedBots(client).catch(resp => {
+        expect(resp.name).toEqual("TwilioRequestError")
     })
 })
+
+test("Null Client", () => {
+    deployed.getDeployedBots(null).catch(resp => {
+        expect(resp.name).toEqual("TwilioRequestError")
+    })
+})
+
+test("Undefined Client", () => {
+    deployed.getDeployedBots(undefined).catch(resp => {
+        expect(resp.name).toEqual("TwilioRequestError")
+    })
+})
+    
