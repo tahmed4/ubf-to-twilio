@@ -17,7 +17,7 @@
     "sms"
   ],
   "author": "SMS-IT",
-  "license": "APGLv3",
+  "license": "AGPLv3",
   "dependencies": {
     "axios": "^0.21.1",
     "form-data": "^4.0.0",
