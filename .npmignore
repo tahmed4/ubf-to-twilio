@@ -1,6 +1,6 @@
 node_modules
 coverage
-test
+tests
 docs
 import-lib/__mocks__
 api-interface
