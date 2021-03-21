@@ -43,15 +43,30 @@
 
 
     <section>
-        <article><h1>What is this?</h1>
+        <article><p><a href="https://nodei.co/npm/ubf-to-twilio/"><img src="https://nodei.co/npm/ubf-to-twilio.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
+<p><a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
+<a href="https://github.com/tahmed4/ubf-to-twilio/actions/workflows/test.yml"><img src="https://github.com/tahmed4/ubf-to-twilio/actions/workflows/test.yml/badge.svg" alt="Tests"></a></p>
+<h1>What is this?</h1>
 <p>Bundles together multiple Twilio API calls to let you easily deploy a chatbot in a few requests.</p>
+<h2>Documentation</h2>
+<p>The documentation for the ubf-to-twilio can be found <a href="http://sms-it.io/">here</a>.</p>
+<h2>Versions</h2>
+<h3>Supported Node.js Versions</h3>
+<p>This package supports the following Node.js implementations:</p>
+<ul>
+<li>Node.js 6</li>
+<li>Node.js 8</li>
+<li>Node.js 10</li>
+<li>Node.js 12</li>
+<li>Node.js 14</li>
+</ul>
 <h1>Installation</h1>
 <p><code>npm i ubf-to-twilio</code></p>
 <h1>Usage</h1>
 <pre class="prettyprint source"><code>const api = require(&quot;ubf-to-twilio&quot;)
 
 //Retrieve Twilio Client.
-client = await api.tryConnectingToTwilio(&quot;TwilioAccountSid&quot;,&quot;TwilioAuthToken&quot;)
+client = await api.tryConnecting({&quot;username&quot;: &quot;TwilioAccountSid&quot;, &quot;password&quot;: &quot;TwilioAuthToken&quot;})
 
 //List all Phone Numbers on an Account.
 numbers = await api.getSMSAccountPhoneNumbers(client)
@@ -67,6 +82,9 @@ assistant_id = await api.uploadNewBot(client, bot)
 
 //Set the SMS webhook of a specific number.
 api.changeBotPhoneNumber(client, assistant_id, &quot;+447123456789&quot;)
+
+//Unset the SMS webhook of a specific bot.
+api.unlinkFromNumber(client, assistant_id)
 
 //Simulate a Conversation with your Chatbot.
 simulated_text = await api.simulateBot(client, assistant_id, &quot;Text you want to simulate!&quot;)
@@ -85,13 +103,13 @@ api.removeBot(client, assistant_id)
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#checkNameFormat">checkNameFormat</a></li><li><a href="global.html#checkNodesWithSchemas">checkNodesWithSchemas</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#assistantNameAvailable">assistantNameAvailable</a></li><li><a href="global.html#changeBotPhoneNumber">changeBotPhoneNumber</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createAssetResource">createAssetResource</a></li><li><a href="global.html#createAssistant">createAssistant</a></li><li><a href="global.html#createBuild">createBuild</a></li><li><a href="global.html#createDeployment">createDeployment</a></li><li><a href="global.html#createEnvironment">createEnvironment</a></li><li><a href="global.html#createFunction">createFunction</a></li><li><a href="global.html#createFunctionResource">createFunctionResource</a></li><li><a href="global.html#createModel">createModel</a></li><li><a href="global.html#createSample">createSample</a></li><li><a href="global.html#createService">createService</a></li><li><a href="global.html#deleteAssistant">deleteAssistant</a></li><li><a href="global.html#deleteSample">deleteSample</a></li><li><a href="global.html#deleteService">deleteService</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#fetchFunctionUri">fetchFunctionUri</a></li><li><a href="global.html#findNodeTemplateType">findNodeTemplateType</a></li><li><a href="global.html#generateJSON">generateJSON</a></li><li><a href="global.html#generateTasks">generateTasks</a></li><li><a href="global.html#genTasksAndMapping">genTasksAndMapping</a></li><li><a href="global.html#getAssetVersion">getAssetVersion</a></li><li><a href="global.html#getAssistantName">getAssistantName</a></li><li><a href="global.html#getAssistants">getAssistants</a></li><li><a href="global.html#getBuildStatus">getBuildStatus</a></li><li><a href="global.html#getChainedSpeak">getChainedSpeak</a></li><li><a href="global.html#getCollect">getCollect</a></li><li><a href="global.html#getCollectFallback">getCollectFallback</a></li><li><a href="global.html#getDeployedBots">getDeployedBots</a></li><li><a href="global.html#getFallback">getFallback</a></li><li><a href="global.html#getFinalTask">getFinalTask</a></li><li><a href="global.html#getFunctionVersion">getFunctionVersion</a></li><li><a href="global.html#getGoodbye">getGoodbye</a></li><li><a href="global.html#getGreeting">getGreeting</a></li><li><a href="global.html#getLinkedAssistants">getLinkedAssistants</a></li><li><a href="global.html#getNamesToNumber">getNamesToNumber</a></li><li><a href="global.html#getNumberId">getNumberId</a></li><li><a href="global.html#getSamples">getSamples</a></li><li><a href="global.html#getServiceUid">getServiceUid</a></li><li><a href="global.html#getSMSAccountPhoneNumbers">getSMSAccountPhoneNumbers</a></li><li><a href="global.html#getStartNode">getStartNode</a></li><li><a href="global.html#getStyleSheet">getStyleSheet</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getUBFSchema">getUBFSchema</a></li><li><a href="global.html#getUnlinkedBots">getUnlinkedBots</a></li><li><a href="global.html#getYNTemplate">getYNTemplate</a></li><li><a href="global.html#listNumbers">listNumbers</a></li><li><a href="global.html#listSamples">listSamples</a></li><li><a href="global.html#loadTemplate">loadTemplate</a></li><li><a href="global.html#removeBot">removeBot</a></li><li><a href="global.html#removeSamples">removeSamples</a></li><li><a href="global.html#removeTasks">removeTasks</a></li><li><a href="global.html#serviceNameAvaialble">serviceNameAvaialble</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#simulateBot">simulateBot</a></li><li><a href="global.html#twilioConnect">twilioConnect</a></li><li><a href="global.html#unlinkFromPhoneNumber">unlinkFromPhoneNumber</a></li><li><a href="global.html#updateNumberWebhook">updateNumberWebhook</a></li><li><a href="global.html#uploadNewBot">uploadNewBot</a></li><li><a href="global.html#validateUBF">validateUBF</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 13:14:20 GMT+0000 (Greenwich Mean Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Mar 21 2021 19:01:19 GMT+0000 (Greenwich Mean Time)
 </footer>
 
 <script> prettyPrint(); </script>

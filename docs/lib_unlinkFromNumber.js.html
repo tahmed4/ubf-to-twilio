@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: lib/removeBot.js</title>
+    <title>JSDoc: Source: lib/unlinkFromNumber.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: lib/removeBot.js</h1>
+    <h1 class="page-title">Source: lib/unlinkFromNumber.js</h1>
 
     
 
@@ -26,78 +26,44 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const validate = require("../import-lib/validate.js")
-const Samples = require("../import-lib/Samples.js")
-const {ValidationError, TwilioRequestError} = require('../import-lib/Exceptions.js');
-const Tasks = require("../import-lib/Tasks.js")
-const Assistants = require("../import-lib/Assistants.js")
-const Services = require("../import-lib/Services.js")
+            <pre class="prettyprint source linenums"><code>const {TwilioRequestError} = require('../import-lib/Exceptions.js');
+const Numbers = require("../import-lib/Numbers.js")
 
 /**
- * Removes live bot by deleting assistant and service
- * that sits on Twilio Autopilot and Twilio Functions.
+ * Unlinks a phone number from an assistant by wiping 
+ * the SMS url webhook on a specific phone number and
+ * sets the number as a free-number.
  * 
  * @param {Object} client - Twilio API client object.
- * @param {string} id - Twilio Assistant id of bot to be removed.
+ * @param {string} id - id of assistant that is going to be unlinked.
  * 
- * @returns {boolean} - `true` if bot successfully removed.
+ * @returns {boolean} - `true` if number successfully changed. `false` otherwise.
  * 
- * @throws {ValidationError} - If bot trying to be removed doesn't exist.
- * @throws {TwilioRequestError} - If requests to Twilio to remove bot fail.
+ * @throws {TwilioRequestError} - throws error if request fails
  */
-async function removeBot(client, id) {
-    /**
-     * Contains all calls to remove assistant.
-     * First remove samples then remove tasks and
-     * then delete assistant. No sample can or task
-     * can exist before deleting an assistant.
-     * 
-     * 
-     * @param {string} assistantUid - Twilio assistant id.
-     * @param {Object} client - Twilio API client object.
-     */
-    async function removeAssistant(assistantUid, client){
-        var tasks = await Tasks.getTasks(assistantUid, client)
-        await Samples.removeSamples(assistantUid, tasks, client)
-        await Tasks.removeTasks(assistantUid, tasks, client)
-        await Assistants.deleteAssistant(assistantUid, client)
-    }
+async function unlinkFromPhoneNumber(client, id) {
+  var phoneUid = ""
+
+  try {
+    botNumbers = await Numbers.getNamesToNumber(client)
     
-    /**
-     * Remove a specific service.
-     * 
-     * @param {string} assistantName 
-     * @param {Object} client - Twilio API client object.
-     */
-    async function removeService(assistantName, client){
-        var serviceUid = await Services.getServiceUid(assistantName, client)
-        await Services.deleteService(serviceUid, client)
-        
+    if(id in botNumbers){
+      phoneUid = await Numbers.getNumberId(client, botNumbers[id])
+      await Numbers.updateNumberWebhook(client, id, phoneUid, true)
+    } else{
+      return false
     }
 
-    if(typeof(client) !== "object" || client === null){
-        throw new TwilioRequestError("Missing Client")
-    }
-    
-    try {
-        var assistantName = await Assistants.getAssistantName(id, client)
-        //checks to ensure the service and assistant exists before deleting
-        if((await validate.serviceNameAvaialble(client, assistantName)) === true){
-            throw new ValidationError("Service associated with bot doesn't exist")
-        } else if ((await validate.assistantNameAvailable(client, assistantName)) === true){
-            throw new ValidationError("Bot doesn't exist")
-        }
-
-        await removeService(assistantName, client)
-        await removeAssistant(id, client)
-    } catch (e){
-        throw new TwilioRequestError(e.message)
-    }
-
-    return true
+  } catch (e){
+    throw new TwilioRequestError(e.message)
   }
 
-module.exports = {removeBot};
+  return true
+
+}
+
+module.exports =  {unlinkFromPhoneNumber}
+
 </code></pre>
         </article>
     </section>
