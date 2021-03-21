@@ -1,8 +1,27 @@
 [![NPM](https://nodei.co/npm/ubf-to-twilio.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ubf-to-twilio/)
 
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Tests](https://github.com/tahmed4/ubf-to-twilio/actions/workflows/test.yml/badge.svg)](https://github.com/tahmed4/ubf-to-twilio/actions/workflows/test.yml)
+
 # What is this?
 
 Bundles together multiple Twilio API calls to let you easily deploy a chatbot in a few requests.
+
+## Documentation
+
+The documentation for the ubf-to-twilio can be found [here][apidocs].
+
+## Versions
+
+### Supported Node.js Versions
+
+This package supports the following Node.js implementations:
+
+* Node.js 6
+* Node.js 8
+* Node.js 10
+* Node.js 12
+* Node.js 14
 
 # Installation
 
@@ -40,3 +59,5 @@ simulated_text = await api.simulateBot(client, assistant_id, "Text you want to s
 api.removeBot(client, assistant_id)
 
 ```
+
+[apidocs]: http://sms-it.io/
