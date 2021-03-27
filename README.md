@@ -27,20 +27,24 @@ This package supports the following Node.js implementations:
 
 `npm i ubf-to-twilio`
 
+or 
+
+`yarn add ubf-to-twilio`
+
 # Usage
 ```
 const api = require("ubf-to-twilio")
 
-//Retrieve Twilio Client.
+//Retrieve Twilio Client for API calls.
 client = await api.tryConnecting({"username": "TwilioAccountSid", "password": "TwilioAuthToken"})
 
-//List all Phone Numbers on an Account.
+//List all Phone Numbers on a Twilio Account.
 numbers = await api.getSMSAccountPhoneNumbers(client)
 
-//Retrieve all Fully Initialised Bots on an Account.
+//Retrieve all Fully Initialised Chatbots on an Account.
 bots = await api.getDeployedBots(client)
 
-//Get back all Bots that have no linked Twilio Service.
+//Get back all Chatbots that have no linked Twilio Service.
 unlinked_bots = await api.getUnlinkedBots(client)
 
 //Upload your Chatbot.
@@ -49,7 +53,7 @@ assistant_id = await api.uploadNewBot(client, bot)
 //Set the SMS webhook of a specific number.
 api.changeBotPhoneNumber(client, assistant_id, "+447123456789")
 
-//Unset the SMS webhook of a specific bot.
+//Unset the SMS webhook of a specific chatbot.
 api.unlinkFromNumber(client, assistant_id)
 
 //Simulate a Conversation with your Chatbot.
