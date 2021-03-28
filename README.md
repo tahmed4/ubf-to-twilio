@@ -64,4 +64,4 @@ api.removeBot(client, assistant_id)
 
 ```
 
-[apidocs]: http://sms-it.io/
+[apidocs]: https://sms-it.io/docs/ubf-to-twilio/
